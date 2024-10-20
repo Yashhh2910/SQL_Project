@@ -1,0 +1,41 @@
+## Schema
+The Queries to creating tables is as follows
+
+-- Create Users Table
+CREATE TABLE Users (
+    user_id SERIAL PRIMARY KEY,
+    name VARCHAR(100),
+    email VARCHAR(100) UNIQUE NOT NULL,
+    role VARCHAR(10) CHECK (role IN ('admin', 'owner', 'tenant')),
+    password_hash VARCHAR(255) NOT NULL
+);
+
+-- Create Properties Table
+CREATE TABLE Properties (
+    property_id SERIAL PRIMARY KEY,
+    owner_id INT REFERENCES Users(user_id),
+    address VARCHAR(255) NOT NULL,
+    city VARCHAR(100),
+    state VARCHAR(100),
+    zip_code VARCHAR(10),
+    rent DECIMAL(10, 2) NOT NULL,
+    status VARCHAR(15) CHECK (status IN ('available', 'rented', 'maintenance')) DEFAULT 'available'
+);
+
+-- Create Tenants Table
+CREATE TABLE Tenants (
+    tenant_id SERIAL PRIMARY KEY,
+    name VARCHAR(100),
+    email VARCHAR(100) UNIQUE NOT NULL,
+    phone_number VARCHAR(15)
+);
+
+-- Create Rental Agreements Table
+CREATE TABLE RentalAgreements (
+    agreement_id SERIAL PRIMARY KEY,
+    property_id INT REFERENCES Properties(property_id),
+    tenant_id INT REFERENCES Tenants(tenant_id),
+    start_date DATE,
+    end_date DATE,
+    rent_amount DECIMAL(10, 2)
+);
